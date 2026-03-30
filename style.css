@@ -1,0 +1,79 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f5f6fa;
+  max-width: 900px;
+  margin: 40px auto;
+}
+
+h1 { text-align: center; }
+
+.nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.nav a {
+  text-decoration: none;
+  padding: 6px 12px;
+  background: #dfe6e9;
+  border-radius: 6px;
+  color: black;
+}
+
+.input-area {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+input, select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+input { flex: 1; }
+
+button {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  table-layout: fixed;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #ddd;
+}
+
+th:last-child, td:last-child {
+  border-right: none;
+}
+
+th {
+  background: #e9ecef;
+}
+
+/* 幅調整 */
+th:nth-child(2), td:nth-child(2) {
+  width: 110px;
+}
+
+th:nth-child(3), td:nth-child(3) {
+  width: 120px;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #999;
+}
