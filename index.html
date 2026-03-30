@@ -79,16 +79,13 @@
   <h1>MY NOTES</h1>
 
   <div class="input-area">
-    <!-- カテゴリ選択 -->
     <select id="categorySelect">
       <option value="Shopping">Shopping</option>
       <option value="Goals">Goals</option>
       <option value="Todo">Todo</option>
     </select>
 
-    <!-- 入力 -->
     <input id="noteInput" placeholder="Write something...">
-
     <button class="add-btn" onclick="addNote()">ADD</button>
   </div>
 
@@ -97,8 +94,8 @@
   <table>
     <thead>
       <tr>
-        <th>Date</th>
         <th>Contents</th>
+        <th>Date</th>
         <th></th>
       </tr>
     </thead>
@@ -110,8 +107,8 @@
   <table>
     <thead>
       <tr>
-        <th>Date</th>
         <th>Contents</th>
+        <th>Date</th>
         <th></th>
       </tr>
     </thead>
@@ -119,16 +116,17 @@
   </table>
 
   <script>
-    // データ取得
     let notes = JSON.parse(localStorage.getItem("notes")) || [];
-
-    // 編集中index
     let editingIndex = -1;
 
-    // カテゴリ一覧
     const categories = ["Shopping", "Goals", "Todo"];
 
-    // 描画
+    // 日付フォーマット（YYYY/MM/DD）
+    function getFormattedDate() {
+      const now = new Date();
+      return `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`;
+    }
+
     function render() {
       const activeTable = document.getElementById("activeTable");
       const completedTable = document.getElementById("completedTable");
@@ -136,13 +134,14 @@
       activeTable.innerHTML = "";
       completedTable.innerHTML = "";
 
-      // ===== 未完了（カテゴリごと）=====
+      // 新しい順に並び替え
+      const reversed = [...notes].reverse();
+
+      // ===== Active =====
       categories.forEach(cat => {
-        const filtered = notes.filter(n => n.category === cat && !n.done);
+        const filtered = reversed.filter(n => n.category === cat && !n.done);
 
         if (filtered.length > 0) {
-
-          // カテゴリ見出し
           const header = document.createElement("tr");
           header.className = "category-row";
           header.innerHTML = `<td colspan="3">${cat}</td>`;
@@ -154,14 +153,14 @@
 
             if (editingIndex === index) {
               tr.innerHTML = `
-                <td>${note.date}</td>
                 <td><input id="editInput" class="edit-input" value="${note.text}"></td>
+                <td>${note.date}</td>
                 <td><button class="save-btn" onclick="saveEdit(${index})">✔</button></td>
               `;
             } else {
               tr.innerHTML = `
-                <td>${note.date}</td>
                 <td onclick="startEdit(${index})">${note.text}</td>
+                <td>${note.date}</td>
                 <td><button class="done-btn" onclick="markDone(${index})">DONE</button></td>
               `;
             }
@@ -171,12 +170,11 @@
         }
       });
 
-      // ===== 完了 =====
+      // ===== Completed =====
       categories.forEach(cat => {
-        const filtered = notes.filter(n => n.category === cat && n.done);
+        const filtered = reversed.filter(n => n.category === cat && n.done);
 
         if (filtered.length > 0) {
-
           const header = document.createElement("tr");
           header.className = "category-row";
           header.innerHTML = `<td colspan="3">${cat}</td>`;
@@ -188,8 +186,8 @@
             tr.classList.add("completed");
 
             tr.innerHTML = `
-              <td>${note.date}</td>
               <td>${note.text}</td>
+              <td>${note.date}</td>
               <td>
                 <button class="undo-btn" onclick="undoDone(${index})">UNDO</button>
                 <button class="delete-btn" onclick="deleteNote(${index})">DELETE</button>
@@ -202,7 +200,6 @@
       });
     }
 
-    // 追加
     function addNote() {
       const input = document.getElementById("noteInput");
       const category = document.getElementById("categorySelect").value;
@@ -211,7 +208,7 @@
       if (!confirm("Add this note?")) return;
 
       notes.push({
-        date: new Date().toLocaleDateString(),
+        date: getFormattedDate(),
         text: input.value,
         done: false,
         category: category
@@ -222,7 +219,6 @@
       render();
     }
 
-    // 完了
     function markDone(index) {
       if (!confirm("Mark as done?")) return;
       notes[index].done = true;
@@ -230,7 +226,6 @@
       render();
     }
 
-    // 戻す
     function undoDone(index) {
       if (!confirm("Return to active?")) return;
       notes[index].done = false;
@@ -238,7 +233,6 @@
       render();
     }
 
-    // 削除
     function deleteNote(index) {
       if (!confirm("Delete this note?")) return;
       notes.splice(index, 1);
@@ -246,13 +240,11 @@
       render();
     }
 
-    // 編集開始
     function startEdit(index) {
       editingIndex = index;
       render();
     }
 
-    // 編集保存
     function saveEdit(index) {
       const input = document.getElementById("editInput");
       if (input.value === "") return;
@@ -263,6 +255,13 @@
       localStorage.setItem("notes", JSON.stringify(notes));
       render();
     }
+
+    // Enterで追加
+    document.getElementById("noteInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        addNote();
+      }
+    });
 
     render();
   </script>
