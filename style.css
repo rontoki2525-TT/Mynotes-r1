@@ -64,7 +64,6 @@ th {
   background: #e9ecef;
 }
 
-/* 幅調整 */
 th:nth-child(2), td:nth-child(2) {
   width: 110px;
 }
