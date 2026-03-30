@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MY NOTES</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f5f6fa;
+      max-width: 800px;
+      margin: 40px auto;
+    }
+
+    h1 { text-align: center; }
+    h2 { margin-top: 30px; }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    input { flex: 1; }
+
+    button {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .add-btn { background: #4a90e2; color: white; }
+    .done-btn { background: #2ecc71; color: white; }
+    .undo-btn { background: #f39c12; color: white; }
+    .delete-btn { background: #e74c3c; color: white; }
+    .save-btn { background: #3498db; color: white; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    th { background: #f0f0f0; }
+
+    .category-row {
+      background: #dfe6e9;
+      font-weight: bold;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .edit-input {
+      width: 100%;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <h1>MY NOTES</h1>
+
+  <div class="input-area">
+    <!-- カテゴリ選択 -->
+    <select id="categorySelect">
+      <option value="Shopping">Shopping</option>
+      <option value="Goals">Goals</option>
+      <option value="Todo">Todo</option>
+    </select>
+
+    <!-- 入力 -->
+    <input id="noteInput" placeholder="Write something...">
+
+    <button class="add-btn" onclick="addNote()">ADD</button>
+  </div>
+
+  <!-- 未完了 -->
+  <h2>Active</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Contents</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="activeTable"></tbody>
+  </table>
+
+  <!-- 完了 -->
+  <h2>Completed</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Contents</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="completedTable"></tbody>
+  </table>
+
+  <script>
+    // データ取得
+    let notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+    // 編集中index
+    let editingIndex = -1;
+
+    // カテゴリ一覧
+    const categories = ["Shopping", "Goals", "Todo"];
+
+    // 描画
+    function render() {
+      const activeTable = document.getElementById("activeTable");
+      const completedTable = document.getElementById("completedTable");
+
+      activeTable.innerHTML = "";
+      completedTable.innerHTML = "";
+
+      // ===== 未完了（カテゴリごと）=====
+      categories.forEach(cat => {
+        const filtered = notes.filter(n => n.category === cat && !n.done);
+
+        if (filtered.length > 0) {
+
+          // カテゴリ見出し
+          const header = document.createElement("tr");
+          header.className = "category-row";
+          header.innerHTML = `<td colspan="3">${cat}</td>`;
+          activeTable.appendChild(header);
+
+          filtered.forEach(note => {
+            const index = notes.indexOf(note);
+            const tr = document.createElement("tr");
+
+            if (editingIndex === index) {
+              tr.innerHTML = `
+                <td>${note.date}</td>
+                <td><input id="editInput" class="edit-input" value="${note.text}"></td>
+                <td><button class="save-btn" onclick="saveEdit(${index})">✔</button></td>
+              `;
+            } else {
+              tr.innerHTML = `
+                <td>${note.date}</td>
+                <td onclick="startEdit(${index})">${note.text}</td>
+                <td><button class="done-btn" onclick="markDone(${index})">DONE</button></td>
+              `;
+            }
+
+            activeTable.appendChild(tr);
+          });
+        }
+      });
+
+      // ===== 完了 =====
+      categories.forEach(cat => {
+        const filtered = notes.filter(n => n.category === cat && n.done);
+
+        if (filtered.length > 0) {
+
+          const header = document.createElement("tr");
+          header.className = "category-row";
+          header.innerHTML = `<td colspan="3">${cat}</td>`;
+          completedTable.appendChild(header);
+
+          filtered.forEach(note => {
+            const index = notes.indexOf(note);
+            const tr = document.createElement("tr");
+            tr.classList.add("completed");
+
+            tr.innerHTML = `
+              <td>${note.date}</td>
+              <td>${note.text}</td>
+              <td>
+                <button class="undo-btn" onclick="undoDone(${index})">UNDO</button>
+                <button class="delete-btn" onclick="deleteNote(${index})">DELETE</button>
+              </td>
+            `;
+
+            completedTable.appendChild(tr);
+          });
+        }
+      });
+    }
+
+    // 追加
+    function addNote() {
+      const input = document.getElementById("noteInput");
+      const category = document.getElementById("categorySelect").value;
+
+      if (input.value === "") return;
+      if (!confirm("Add this note?")) return;
+
+      notes.push({
+        date: new Date().toLocaleDateString(),
+        text: input.value,
+        done: false,
+        category: category
+      });
+
+      localStorage.setItem("notes", JSON.stringify(notes));
+      input.value = "";
+      render();
+    }
+
+    // 完了
+    function markDone(index) {
+      if (!confirm("Mark as done?")) return;
+      notes[index].done = true;
+      localStorage.setItem("notes", JSON.stringify(notes));
+      render();
+    }
+
+    // 戻す
+    function undoDone(index) {
+      if (!confirm("Return to active?")) return;
+      notes[index].done = false;
+      localStorage.setItem("notes", JSON.stringify(notes));
+      render();
+    }
+
+    // 削除
+    function deleteNote(index) {
+      if (!confirm("Delete this note?")) return;
+      notes.splice(index, 1);
+      localStorage.setItem("notes", JSON.stringify(notes));
+      render();
+    }
+
+    // 編集開始
+    function startEdit(index) {
+      editingIndex = index;
+      render();
+    }
+
+    // 編集保存
+    function saveEdit(index) {
+      const input = document.getElementById("editInput");
+      if (input.value === "") return;
+
+      notes[index].text = input.value;
+      editingIndex = -1;
+
+      localStorage.setItem("notes", JSON.stringify(notes));
+      render();
+    }
+
+    render();
+  </script>
+
+</body>
+</html>
