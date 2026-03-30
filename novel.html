@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Novel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -9,31 +10,27 @@
 
   <h1>MY NOVEL</h1>
 
-  <!-- ナビ -->
   <div class="nav">
     <a href="index.html">Notes</a>
     <a href="novel.html">Novel</a>
   </div>
 
-  <!-- 小説入力 -->
-  <textarea id="novelArea" style="width:100%; height:400px; padding:10px;"></textarea>
+  <textarea id="novelArea" style="width:100%; height:60vh; padding:10px;"></textarea>
 
   <br><br>
 
   <button onclick="saveNovel()">SAVE</button>
 
   <script>
-    // 保存
     function saveNovel() {
       const text = document.getElementById("novelArea").value;
       localStorage.setItem("novel", text);
       alert("Saved!");
     }
 
-    // 読み込み
     window.onload = function() {
-      const saved = localStorage.getItem("novel") || "";
-      document.getElementById("novelArea").value = saved;
+      document.getElementById("novelArea").value =
+        localStorage.getItem("novel") || "";
     }
   </script>
 

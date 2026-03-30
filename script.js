@@ -1,4 +1,3 @@
-// ===== データ取得 =====
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 let categories = JSON.parse(localStorage.getItem("categories")) || [];
 
@@ -6,13 +5,11 @@ if (categories.length === 0) {
   categories = ["Default"];
 }
 
-// ===== 日付 =====
 function getFormattedDate() {
   const now = new Date();
   return `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`;
 }
 
-// ===== カテゴリ描画 =====
 function renderCategory() {
   const select = document.getElementById("categorySelect");
   select.innerHTML = "";
@@ -25,7 +22,6 @@ function renderCategory() {
   });
 }
 
-// ===== カテゴリ追加 =====
 function addCategory() {
   const input = document.getElementById("newCategory");
   if (input.value === "") return;
@@ -38,7 +34,6 @@ function addCategory() {
   renderCategory();
 }
 
-// ===== カテゴリ削除 =====
 function deleteCategory() {
   const select = document.getElementById("categorySelect");
   const selected = select.value;
@@ -47,11 +42,8 @@ function deleteCategory() {
 
   categories = categories.filter(c => c !== selected);
 
-  // 該当メモはDefaultへ
   notes = notes.map(n => {
-    if (n.category === selected) {
-      n.category = "Default";
-    }
+    if (n.category === selected) n.category = "Default";
     return n;
   });
 
@@ -62,7 +54,6 @@ function deleteCategory() {
   render();
 }
 
-// ===== 描画 =====
 function render() {
   const activeTable = document.getElementById("activeTable");
   const completedTable = document.getElementById("completedTable");
@@ -77,52 +68,39 @@ function render() {
     const active = reversed.filter(n => n.category === cat && !n.done);
     const completed = reversed.filter(n => n.category === cat && n.done);
 
-    if (active.length > 0) {
-      const header = document.createElement("tr");
-      header.innerHTML = `<td colspan="3"><b>${cat}</b></td>`;
-      activeTable.appendChild(header);
+    active.forEach(note => {
+      const tr = document.createElement("tr");
 
-      active.forEach(note => {
-        const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${note.category}</td>
+        <td>${note.text}</td>
+        <td>${note.date}</td>
+        <td><button onclick="markDone(${note.id})">DONE</button></td>
+      `;
 
-        tr.innerHTML = `
-          <td>${note.text}</td>
-          <td>${note.date}</td>
-          <td>
-            <button onclick="markDone(${note.id})">DONE</button>
-          </td>
-        `;
+      activeTable.appendChild(tr);
+    });
 
-        activeTable.appendChild(tr);
-      });
-    }
+    completed.forEach(note => {
+      const tr = document.createElement("tr");
+      tr.classList.add("completed");
 
-    if (completed.length > 0) {
-      const header = document.createElement("tr");
-      header.innerHTML = `<td colspan="3"><b>${cat}</b></td>`;
-      completedTable.appendChild(header);
+      tr.innerHTML = `
+        <td>${note.category}</td>
+        <td>${note.text}</td>
+        <td>${note.date}</td>
+        <td>
+          <button onclick="undoDone(${note.id})">UNDO</button>
+          <button onclick="deleteNote(${note.id})">DELETE</button>
+        </td>
+      `;
 
-      completed.forEach(note => {
-        const tr = document.createElement("tr");
-        tr.classList.add("completed");
-
-        tr.innerHTML = `
-          <td>${note.text}</td>
-          <td>${note.date}</td>
-          <td>
-            <button onclick="undoDone(${note.id})">UNDO</button>
-            <button onclick="deleteNote(${note.id})">DELETE</button>
-          </td>
-        `;
-
-        completedTable.appendChild(tr);
-      });
-    }
+      completedTable.appendChild(tr);
+    });
 
   });
 }
 
-// ===== メモ追加 =====
 function addNote() {
   const input = document.getElementById("noteInput");
   const category = document.getElementById("categorySelect").value;
@@ -130,7 +108,7 @@ function addNote() {
   if (input.value === "") return;
 
   notes.push({
-    id: Date.now(), // ← ID管理
+    id: Date.now(),
     text: input.value,
     date: getFormattedDate(),
     done: false,
@@ -143,7 +121,6 @@ function addNote() {
   render();
 }
 
-// ===== 完了 =====
 function markDone(id) {
   notes = notes.map(n => {
     if (n.id === id) n.done = true;
@@ -154,7 +131,6 @@ function markDone(id) {
   render();
 }
 
-// ===== 戻す =====
 function undoDone(id) {
   notes = notes.map(n => {
     if (n.id === id) n.done = false;
@@ -165,7 +141,6 @@ function undoDone(id) {
   render();
 }
 
-// ===== 削除 =====
 function deleteNote(id) {
   if (!confirm("Delete this note?")) return;
 
@@ -175,7 +150,6 @@ function deleteNote(id) {
   render();
 }
 
-// ===== 初期処理 =====
 document.addEventListener("DOMContentLoaded", function() {
   renderCategory();
   render();

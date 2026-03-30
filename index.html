@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>MY NOTES</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- スマホ対応 -->
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -15,14 +16,14 @@
     <a href="novel.html">Novel</a>
   </div>
 
-  <!-- カテゴリ追加 -->
+  <!-- カテゴリ -->
   <div class="input-area">
     <input id="newCategory" placeholder="New category">
     <button onclick="addCategory()">ADD CAT</button>
     <button onclick="deleteCategory()">DEL CAT</button>
   </div>
 
-  <!-- メモ追加 -->
+  <!-- メモ -->
   <div class="input-area">
     <select id="categorySelect"></select>
     <input id="noteInput" placeholder="Write something...">
@@ -30,28 +31,36 @@
   </div>
 
   <h2>Active</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Contents</th>
-        <th>Date</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="activeTable"></tbody>
-  </table>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Contents</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="activeTable"></tbody>
+    </table>
+  </div>
 
   <h2>Completed</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Contents</th>
-        <th>Date</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="completedTable"></tbody>
-  </table>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Contents</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="completedTable"></tbody>
+    </table>
+  </div>
 
   <script src="script.js"></script>
 

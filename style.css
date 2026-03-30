@@ -5,8 +5,11 @@ body {
   margin: 40px auto;
 }
 
-h1 { text-align: center; }
+h1 {
+  text-align: center;
+}
 
+/* ナビ */
 .nav {
   display: flex;
   gap: 10px;
@@ -15,32 +18,48 @@ h1 { text-align: center; }
 
 .nav a {
   text-decoration: none;
-  padding: 6px 12px;
+  padding: 8px 12px;
   background: #dfe6e9;
   border-radius: 6px;
   color: black;
 }
 
+/* 入力エリア */
 .input-area {
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 input, select {
-  padding: 8px;
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
 
-input { flex: 1; }
+input {
+  flex: 1;
+}
 
+/* ボタン */
 button {
-  padding: 5px 8px;
+  padding: 10px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
-  font-size: 11px;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* テーブル */
+.table-wrapper {
+  overflow-x: auto;
 }
 
 table {
@@ -48,6 +67,8 @@ table {
   border-collapse: collapse;
   background: white;
   table-layout: fixed;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 th, td {
@@ -64,15 +85,52 @@ th {
   background: #e9ecef;
 }
 
-th:nth-child(2), td:nth-child(2) {
-  width: 110px;
+tr:hover {
+  background: #f8f9fa;
 }
 
-th:nth-child(3), td:nth-child(3) {
-  width: 120px;
-}
+/* 幅 */
+th:nth-child(1), td:nth-child(1) { width: 120px; }
+th:nth-child(3), td:nth-child(3) { width: 110px; }
+th:nth-child(4), td:nth-child(4) { width: 120px; }
 
 .completed {
   text-decoration: line-through;
   color: #999;
+}
+
+/* ===== スマホ対応 ===== */
+@media (max-width: 600px) {
+
+  body {
+    margin: 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .input-area {
+    flex-direction: column;
+  }
+
+  input, select, button {
+    width: 100%;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  /* CategoryとDate非表示 */
+  th:nth-child(1),
+  td:nth-child(1),
+  th:nth-child(3),
+  td:nth-child(3) {
+    display: none;
+  }
 }
