@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>MY NOTES</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- スマホ対応 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -10,7 +10,6 @@
 
   <h1>MY NOTES</h1>
 
-  <!-- ナビ -->
   <div class="nav">
     <a href="index.html">Notes</a>
     <a href="novel.html">Novel</a>
@@ -32,6 +31,7 @@
 
   <h2>Active</h2>
 
+  <!-- PC用テーブル -->
   <div class="table-wrapper">
     <table>
       <thead>
@@ -45,6 +45,9 @@
       <tbody id="activeTable"></tbody>
     </table>
   </div>
+
+  <!-- スマホ用カード -->
+  <div id="activeCards"></div>
 
   <h2>Completed</h2>
 
@@ -61,6 +64,8 @@
       <tbody id="completedTable"></tbody>
     </table>
   </div>
+
+  <div id="completedCards"></div>
 
   <script src="script.js"></script>
 
